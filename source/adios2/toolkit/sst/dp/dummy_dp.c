@@ -8,7 +8,7 @@
 
 #include "sst_data.h"
 
-#include "adios2/toolkit/profiling/taustubs/taustubs.h"
+#include "adios2/toolkit/profiling/external/Timer.h"
 #include "dp_interface.h"
 
 /*
@@ -206,7 +206,7 @@ static DP_RS_Stream DummyInitReader(CP_Services Svcs, void *CP_Stream,
 static void DummyReadRequestHandler(CManager cm, CMConnection conn, void *msg_v,
                                     void *client_Data, attr_list attrs)
 {
-    TAU_START_FUNC();
+    ADIOST_START_FUNC();
     DummyReadRequestMsg ReadRequestMsg = (DummyReadRequestMsg)msg_v;
     Dummy_WSR_Stream WSR_Stream = ReadRequestMsg->WS_Stream;
 
@@ -238,7 +238,7 @@ static void DummyReadRequestHandler(CManager cm, CMConnection conn, void *msg_v,
             Svcs->sendToPeer(WS_Stream->CP_Stream, WSR_Stream->PeerCohort,
                              ReadRequestMsg->RequestingRank,
                              WS_Stream->ReadReplyFormat, &ReadReplyMsg);
-            TAU_STOP_FUNC();
+            ADIOST_STOP_FUNC();
             return;
         }
         tmp = tmp->Next;
@@ -254,7 +254,7 @@ static void DummyReadRequestHandler(CManager cm, CMConnection conn, void *msg_v,
      * assert(0) here.  Probably this sort of error should close the link to
      * a reader though.
      */
-    TAU_STOP_FUNC();
+    ADIOST_STOP_FUNC();
 }
 
 typedef struct _DummyCompletionHandle
@@ -269,7 +269,7 @@ typedef struct _DummyCompletionHandle
 static void DummyReadReplyHandler(CManager cm, CMConnection conn, void *msg_v,
                                   void *client_Data, attr_list attrs)
 {
-    TAU_START_FUNC();
+    ADIOST_START_FUNC();
     DummyReadReplyMsg ReadReplyMsg = (DummyReadReplyMsg)msg_v;
     Dummy_RS_Stream RS_Stream = ReadReplyMsg->RS_Stream;
     CP_Services Svcs = (CP_Services)client_Data;
@@ -292,7 +292,7 @@ static void DummyReadReplyHandler(CManager cm, CMConnection conn, void *msg_v,
      * Signal the condition to wake the reader if they are waiting.
      */
     CMCondition_signal(cm, ReadReplyMsg->NotifyCondition);
-    TAU_STOP_FUNC();
+    ADIOST_STOP_FUNC();
 }
 
 static DP_WS_Stream DummyInitWriter(CP_Services Svcs, void *CP_Stream)

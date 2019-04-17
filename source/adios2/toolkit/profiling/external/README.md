@@ -1,10 +1,10 @@
 # Profiling Interface for ADIOS2
 
-_Note:_ This library in ADIOS is a stub wrapper library for the TAU performance measurement system.  In the near future, we will make it more generic for instrumentation-based tools.  In the meantime, it is TAU specific.
+_Note:_ This library in ADIOS is a stub wrapper library for the ADIOST performance measurement system.  In the near future, we will make it more generic for instrumentation-based tools.  In the meantime, it is ADIOST specific.
 
 ## Todo Items
 - [ ] Make the interface generic.
-    - [ ] Replace TAU-specific symbols with generic versions that will be implemented by interested measurement libraries (i.e. Score-P). 
+    - [ ] Replace ADIOST-specific symbols with generic versions that will be implemented by interested measurement libraries (i.e. Score-P). 
     - [ ] New environment variable specifying location of library containing function implementations.
 
 - [ ] Add a CMake option to disable the API entirely.
@@ -33,9 +33,9 @@ Option 1, explicit timer name:
 
 ```C
 void function_to_time(void) {
-    TAU_START("interesting loop");
+    ADIOST_START("interesting loop");
     ...
-    TAU_STOP("interesting loop");
+    ADIOST_STOP("interesting loop");
 }
 ```
 
@@ -46,9 +46,9 @@ void function_to_time(void) {
     /* Will generate something like:
      * "function_to_time [{filename.c} {123,0}]"
      */
-    TAU_START_FUNC();
+    ADIOST_START_FUNC();
     ...
-    TAU_STOP_FUNC();
+    ADIOST_STOP_FUNC();
 }
 ```
 
@@ -57,7 +57,7 @@ void function_to_time(void) {
 The interface can be used to capture interesting counter values, too:
 
 ```C
-TAU_SAMPLE_COUNTER("Bytes Written", 1024);
+ADIOST_SAMPLE_COUNTER("Bytes Written", 1024);
 ```
 
 ### Metadata
@@ -65,7 +65,7 @@ TAU_SAMPLE_COUNTER("Bytes Written", 1024);
 The interface can be used to capture interesting metadata:
 
 ```C
-TAU_METADATA("ADIOS Method", "POSIX");
+ADIOST_METADATA("ADIOS Method", "POSIX");
 ```
 
 ## How to instrument with the C++ API
@@ -77,24 +77,24 @@ void function_to_time(void) {
     /* Will generate something like:
      * "function_to_time [{filename.cpp} {123,0}]"
      */
-    TAU_SCOPED_TIMER_FUNC();
+    ADIOST_SCOPED_TIMER_FUNC();
     ...
 }
 ```
 
 ```C++
 do {
-    TAU_SCOPED_TIMER("While Loop");
+    ADIOST_SCOPED_TIMER("While Loop");
     ...
 } while (!done);
 ```
 
 ## How to use at runtime
 
-To use the API with TAU, the executable has to be linked dynamically.  Then the executable will be executed with the ```tau_exec``` wrapper script that will preload the TAU libraries and enable additional TAU features.  ```tau_exec``` should be in the user's ```PATH```:
+To use the API with ADIOST, the executable has to be linked dynamically.  Then the executable will be executed with the ```adiost_exec``` wrapper script that will preload the ADIOST libraries and enable additional ADIOST features.  ```adiost_exec``` should be in the user's ```PATH```:
 
 ```bash
-mpirun -np 4 tau_exec -T mpi,papi,pthread,cupti -ebs -cupti -io ./executable
+mpirun -np 4 adiost_exec -T mpi,papi,pthread,cupti -ebs -cupti -io ./executable
 ```
 
-The example above will use a TAU configuration with PAPI, MPI and Pthread support, and will enable event based sampling (-ebs), CUDA (-cupti) and POSIX I/O measurement (-io).
+The example above will use a ADIOST configuration with PAPI, MPI and Pthread support, and will enable event based sampling (-ebs), CUDA (-cupti) and POSIX I/O measurement (-io).

@@ -18,7 +18,7 @@
 
 #include "adios2/helper/adiosFunctions.h" //helper::GetType<T>, helper::ReadValue<T>,
                                           // ReduceValue<T>
-#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
+#include "adios2/toolkit/profiling/external/Timer.h"
 
 #ifdef _WIN32
 #pragma warning(disable : 4503) // Windows complains about SubFileInfoMap levels
@@ -768,7 +768,7 @@ std::vector<size_t>
 BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
                                                   BufferSTL &bufferSTL)
 {
-    TAU_SCOPED_TIMER_FUNC();
+    ADIOST_SCOPED_TIMER_FUNC();
     int rank, size;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
@@ -777,7 +777,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
     size_t pgCount = 0; //< tracks global PG count
     if (rank == 0)
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         // assumes that things are more or less balanced
         m_PGRankIndices.reserve(m_MetadataSet.PGIndex.Buffer.size() *
                                 static_cast<size_t>(size));
@@ -795,7 +795,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
         -> size_t
 
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         size_t indicesSize = 0;
         for (const auto &indexPair : indices)
         {
@@ -809,7 +809,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
             size_t &position)
 
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         for (const auto &indexPair : indices)
         {
             const auto &buffer = indexPair.second.Buffer;
@@ -819,7 +819,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
     };
 
     auto lf_SerializeAllIndices = [&](MPI_Comm comm, const int rank) {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         const size_t pgIndicesSize = m_MetadataSet.PGIndex.Buffer.size();
         const size_t variablesIndicesSize =
             lf_IndicesSize(m_MetadataSet.VarsIndices);
@@ -866,7 +866,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
             const bool isRankConstant)
 
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         size_t localPosition = position;
         while (localPosition < endPosition)
         {
@@ -920,7 +920,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
             const std::vector<char> &serialized, const size_t position)
 
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         const size_t rankIndicesSize = headerInfo[0];
         const size_t variablesIndexOffset = headerInfo[1] + position;
         const size_t attributesIndexOffset = headerInfo[2] + position;
@@ -952,7 +952,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
     auto lf_SortMergeIndices = [&](
         const std::unordered_map<std::string, std::vector<SerialElementIndex>>
             &deserializedIndices) {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         auto &position = bufferSTL.m_Position;
         auto &buffer = bufferSTL.m_Buffer;
 
@@ -988,7 +988,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
     // deserialize, it's all local inside rank 0
     if (rank == 0)
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         const size_t serializedSize = bufferSTL.m_Position;
         const std::vector<char> &serialized = bufferSTL.m_Buffer;
         size_t serializedPosition = 0;
@@ -1020,7 +1020,7 @@ BP3Serializer::AggregateCollectiveMetadataIndices(MPI_Comm comm,
     // now merge (and sort variables and attributes) indices
     if (rank == 0)
     {
-        TAU_SCOPED_TIMER_FUNC();
+        ADIOST_SCOPED_TIMER_FUNC();
         auto &position = bufferSTL.m_Position;
         auto &buffer = bufferSTL.m_Buffer;
         position = countPosition; // back to pg count position

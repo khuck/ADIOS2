@@ -40,6 +40,8 @@
 #include "adios2/operator/callback/Signature1.h"
 #include "adios2/operator/callback/Signature2.h"
 
+#include "adios2/toolkit/profiling/external/Timer.h"
+
 namespace adios2
 {
 namespace core
@@ -49,6 +51,7 @@ ADIOS::ADIOS(const std::string configFile, MPI_Comm mpiComm,
              const bool debugMode, const std::string hostLanguage)
 : m_ConfigFile(configFile), m_DebugMode(debugMode), m_HostLanguage(hostLanguage)
 {
+    ADIOST_INIT();
     if (m_DebugMode && mpiComm == MPI_COMM_NULL)
     {
         throw std::ios_base::failure(

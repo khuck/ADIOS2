@@ -11,7 +11,7 @@ add_library(sst
   cp/ffs_marshal.c
 )
 
-target_link_libraries(sst PRIVATE taustubs)
+target_link_libraries(sst PRIVATE externaltimer)
 
 if(ADIOS2_SST_HAVE_LIBFABRIC)
   target_sources(sst PRIVATE dp/rdma_dp.c)

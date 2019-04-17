@@ -8,7 +8,7 @@
 
 #include "sst_data.h"
 
-#include "adios2/toolkit/profiling/taustubs/taustubs.h"
+#include "adios2/toolkit/profiling/external/Timer.h"
 #include "dp_interface.h"
 
 /*
@@ -225,7 +225,7 @@ static void EvpathReadRequestHandler(CManager cm, CMConnection conn,
                                      void *msg_v, void *client_Data,
                                      attr_list attrs)
 {
-    TAU_START_FUNC();
+    ADIOST_START_FUNC();
     EvpathReadRequestMsg ReadRequestMsg = (EvpathReadRequestMsg)msg_v;
     Evpath_WSR_Stream WSR_Stream = ReadRequestMsg->WS_Stream;
 
@@ -271,7 +271,7 @@ static void EvpathReadRequestHandler(CManager cm, CMConnection conn,
                     .Conn,
                 WS_Stream->ReadReplyFormat, &ReadReplyMsg);
 
-            TAU_STOP_FUNC();
+            ADIOST_STOP_FUNC();
             return;
         }
         tmp = tmp->Next;
@@ -287,7 +287,7 @@ static void EvpathReadRequestHandler(CManager cm, CMConnection conn,
      * assert(0) here.  Probably this sort of error should close the link to
      * a reader though.
      */
-    TAU_STOP_FUNC();
+    ADIOST_STOP_FUNC();
 }
 
 typedef struct _EvpathCompletionHandle
@@ -305,7 +305,7 @@ typedef struct _EvpathCompletionHandle
 static void EvpathReadReplyHandler(CManager cm, CMConnection conn, void *msg_v,
                                    void *client_Data, attr_list attrs)
 {
-    TAU_START_FUNC();
+    ADIOST_START_FUNC();
     EvpathReadReplyMsg ReadReplyMsg = (EvpathReadReplyMsg)msg_v;
     Evpath_RS_Stream RS_Stream = ReadReplyMsg->RS_Stream;
     CP_Services Svcs = (CP_Services)client_Data;
@@ -316,7 +316,7 @@ static void EvpathReadReplyHandler(CManager cm, CMConnection conn, void *msg_v,
         Svcs->verbose(RS_Stream->CP_Stream, "Got a reply to remote memory "
                                             "read, but the condition is "
                                             "already signalled, returning\n");
-        TAU_STOP_FUNC();
+        ADIOST_STOP_FUNC();
         return;
     }
     Handle = CMCondition_get_client_data(cm, ReadReplyMsg->NotifyCondition);
@@ -326,7 +326,7 @@ static void EvpathReadReplyHandler(CManager cm, CMConnection conn, void *msg_v,
         Svcs->verbose(
             RS_Stream->CP_Stream,
             "Got a reply to remote memory read, but condition not found\n");
-        TAU_STOP_FUNC();
+        ADIOST_STOP_FUNC();
         return;
     }
     Svcs->verbose(
@@ -345,7 +345,7 @@ static void EvpathReadReplyHandler(CManager cm, CMConnection conn, void *msg_v,
      * Signal the condition to wake the reader if they are waiting.
      */
     CMCondition_signal(cm, ReadReplyMsg->NotifyCondition);
-    TAU_STOP_FUNC();
+    ADIOST_STOP_FUNC();
 }
 
 static DP_WS_Stream EvpathInitWriter(CP_Services Svcs, void *CP_Stream,
