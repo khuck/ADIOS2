@@ -3,9 +3,10 @@
 _Note:_ This library in ADIOS is a stub wrapper library for the ADIOST performance measurement system.  In the near future, we will make it more generic for instrumentation-based tools.  In the meantime, it is ADIOST specific.
 
 ## Todo Items
-- [ ] Make the interface generic.
-    - [ ] Replace ADIOST-specific symbols with generic versions that will be implemented by interested measurement libraries (i.e. Score-P). 
-    - [ ] New environment variable specifying location of library containing function implementations.
+- [x] Make the interface generic.
+    - [x] Replace ADIOST-specific symbols with generic versions that will be implemented by interested measurement libraries (i.e. Score-P). 
+    - ~~[ ] New environment variable specifying location of library containing function implementations.~~
+    - [ ] Remove dynamic-linking specific approach (checking ```LD_PRELOAD```)  If the symbol isn't loaded, don't search for it.  We have to support static linking, too - and if we ```dlopen()``` a library with pthread in it, the application will crash because of initialization of thread-local static globals.
 
 - [ ] Add a CMake option to disable the API entirely.
 
