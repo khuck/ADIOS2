@@ -14,6 +14,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 struct option options[] = {{"help", no_argument, NULL, 'h'},
                            {"verbose", no_argument, NULL, 'v'},

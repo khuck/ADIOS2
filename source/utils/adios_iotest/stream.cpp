@@ -13,6 +13,7 @@
 #ifdef ADIOS2_HAVE_HDF5
 #include "hdf5Stream.h"
 #endif
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 ioGroup::~ioGroup() {}
 Stream::Stream(const std::string &streamName, const adios2::Mode mode)
@@ -23,6 +24,7 @@ Stream::~Stream() {}
 
 void Stream::fillArray(std::shared_ptr<VariableInfo> ov, double value)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (ov->type == "double")
     {
         double *a = reinterpret_cast<double *>(ov->data.data());
@@ -56,6 +58,7 @@ std::shared_ptr<Stream> openStream(const std::string &streamName,
                                    const adios2::Mode mode, IOLib iolib,
                                    MPI_Comm comm)
 {
+    TAU_SCOPED_TIMER_FUNC();
     std::shared_ptr<Stream> sp;
     switch (iolib)
     {

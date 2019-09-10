@@ -14,11 +14,13 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 hdf5Stream::hdf5Stream(const std::string &streamName, const adios2::Mode mode,
                        MPI_Comm comm)
 : Stream(streamName, mode), comm(comm)
 {
+    TAU_SCOPED_TIMER_FUNC();
     hid_t acc_tpl = H5Pcreate(H5P_FILE_ACCESS);
     MPI_Info info = MPI_INFO_NULL;
     herr_t ret = H5Pset_fapl_mpio(acc_tpl, comm, info);
@@ -80,6 +82,7 @@ hid_t hdf5Stream::hdf5Type(std::string &type)
 
 void hdf5Stream::defineHDF5Array(const std::shared_ptr<VariableInfo> ov)
 {
+    TAU_SCOPED_TIMER_FUNC();
     const int ndim = ov->ndim + 1;
     std::vector<hsize_t> maxdims(ndim);
     std::vector<hsize_t> dims(ndim);
@@ -114,6 +117,7 @@ void hdf5Stream::defineHDF5Array(const std::shared_ptr<VariableInfo> ov)
 void hdf5Stream::putHDF5Array(const std::shared_ptr<VariableInfo> ov,
                               size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     /* note: step starts from 1 */
     const auto it = varmap.find(ov->name);
     hdf5VarInfo &vi = it->second;
@@ -147,6 +151,7 @@ void hdf5Stream::putHDF5Array(const std::shared_ptr<VariableInfo> ov,
 void hdf5Stream::Write(CommandWrite *cmdW, Config &cfg,
                        const Settings &settings, size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (!settings.myRank && settings.verbose)
     {
         std::cout << "    Write to HDF5 output " << cmdW->streamName
@@ -233,6 +238,7 @@ void hdf5Stream::Write(CommandWrite *cmdW, Config &cfg,
 
 void hdf5Stream::getHDF5Array(std::shared_ptr<VariableInfo> ov, size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     hid_t dataset;
     hid_t filespace;
     if (step == 1)
@@ -290,6 +296,7 @@ void hdf5Stream::getHDF5Array(std::shared_ptr<VariableInfo> ov, size_t step)
 adios2::StepStatus hdf5Stream::Read(CommandRead *cmdR, Config &cfg,
                                     const Settings &settings, size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (!settings.myRank && settings.verbose)
     {
         std::cout << "    Read ";
@@ -382,6 +389,7 @@ adios2::StepStatus hdf5Stream::Read(CommandRead *cmdR, Config &cfg,
 }
 void hdf5Stream::Close()
 {
+    TAU_SCOPED_TIMER_FUNC();
     for (const auto it : varmap)
     {
         auto &vi = it.second;

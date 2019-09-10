@@ -14,11 +14,13 @@
 #include <numeric>
 #include <stdexcept>
 #include <string>
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 adiosStream::adiosStream(const std::string &streamName, adios2::IO &io,
                          const adios2::Mode mode, MPI_Comm comm)
 : Stream(streamName, mode), io(io), comm(comm)
 {
+    TAU_SCOPED_TIMER_FUNC();
     // int myRank;
     // MPI_Comm_rank(comm, &myRank);
     // double timeStart, timeEnd;
@@ -56,6 +58,7 @@ adiosStream::~adiosStream() {}
 
 void adiosStream::defineADIOSArray(const std::shared_ptr<VariableInfo> ov)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (ov->type == "double")
     {
         adios2::Variable<double> v = io.DefineVariable<double>(
@@ -76,6 +79,7 @@ void adiosStream::defineADIOSArray(const std::shared_ptr<VariableInfo> ov)
 
 void adiosStream::putADIOSArray(const std::shared_ptr<VariableInfo> ov)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (ov->type == "double")
     {
         const double *a = reinterpret_cast<const double *>(ov->data.data());
@@ -95,6 +99,7 @@ void adiosStream::putADIOSArray(const std::shared_ptr<VariableInfo> ov)
 
 void adiosStream::getADIOSArray(std::shared_ptr<VariableInfo> ov)
 {
+    TAU_SCOPED_TIMER_FUNC();
     // Allocate memory on first access
     if (!ov->data.size())
     {
@@ -145,6 +150,7 @@ void adiosStream::getADIOSArray(std::shared_ptr<VariableInfo> ov)
 adios2::StepStatus adiosStream::readADIOS(CommandRead *cmdR, Config &cfg,
                                           const Settings &settings, size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (!settings.myRank && settings.verbose)
     {
         std::cout << "    Read ";
@@ -236,6 +242,7 @@ adios2::StepStatus adiosStream::readADIOS(CommandRead *cmdR, Config &cfg,
 void adiosStream::writeADIOS(CommandWrite *cmdW, Config &cfg,
                              const Settings &settings, size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     if (!settings.myRank && settings.verbose)
     {
         std::cout << "    Write to output " << cmdW->streamName << " the group "
@@ -331,12 +338,14 @@ void adiosStream::Write(CommandWrite *cmdW, Config &cfg,
                         const Settings &settings, size_t step)
 {
 
+    TAU_SCOPED_TIMER_FUNC();
     writeADIOS(cmdW, cfg, settings, step);
 }
 
 adios2::StepStatus adiosStream::Read(CommandRead *cmdR, Config &cfg,
                                      const Settings &settings, size_t step)
 {
+    TAU_SCOPED_TIMER_FUNC();
     return readADIOS(cmdR, cfg, settings, step);
 }
 

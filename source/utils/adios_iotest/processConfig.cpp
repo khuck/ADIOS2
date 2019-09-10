@@ -16,6 +16,7 @@
 
 #include "decomp.h"
 #include "processConfig.h"
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 Command::Command(Operation operation) : op(operation) {}
 Command::~Command() {}

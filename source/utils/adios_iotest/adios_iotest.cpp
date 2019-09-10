@@ -15,9 +15,11 @@
 #include "processConfig.h"
 #include "settings.h"
 #include "stream.h"
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 int main(int argc, char *argv[])
 {
+    TAU_SCOPED_TIMER_FUNC();
     MPI_Init(&argc, &argv);
 
     Settings settings;

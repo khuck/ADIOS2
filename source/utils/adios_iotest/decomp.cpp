@@ -6,6 +6,7 @@
  */
 
 #include "decomp.h"
+#include "adios2/toolkit/profiling/taustubs/tautimer.hpp"
 
 void decompColumnMajor(const size_t ndim, const size_t rank,
                        const size_t *decomp, size_t *pos)
